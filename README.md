@@ -12,4 +12,4 @@ The City of New Orleans releases camera locations as a [map without option to do
 
 - Open `camera-locations-download.html` in your browser
 - Click the download button
-- Ignore other texts and links on the page, it is from a page that is no longer maintianed.
+- Ignore other texts and links on the page, it is from a page that is no longer maintained.
