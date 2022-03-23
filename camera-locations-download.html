@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Title -->
+  <title>EOS - New Orleans Surveillance Locations Download</title>
+
+  <!-- Required Meta Tags Always Come First -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+  <link rel="manifest" href="/assets/eos/favicon/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/eos/favicon/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css">
+
+
+  <!-- Google Fonts -->
+  <link href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+  <!-- CSS Implementing Plugins -->
+
+  <script src="https://kit.fontawesome.com/e444c855b2.js" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="https://js.arcgis.com/3.32/esri/css/esri.css">
+  <script src="https://js.arcgis.com/4.15/"></script>
+
+<script>
+  let cameras = false
+
+  require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic",
+      "esri/symbols/SimpleMarkerSymbol"
+    ],
+    function(
+      Map, MapView, FeatureLayer, GraphicsLayer, Graphic
+    ) {
+
+      var map = new Map({
+        basemap: "topo-vector"
+      });
+    
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-90.0663, 29.957436],
+        zoom: 11
+      });
+
+      //*** CHALLENGE ***//
+      var sql = "STATE_NAME = 'Louisiana'";
+
+      view.when(function(){
+        //*** ADD ***//
+        queryFeatureLayer(view.center, 991500, "intercects")
+        queryFeatureLayer2(view.center, 991500, "intercects")
+        queryFeatureLayerView(view.center, 991500, "intersects")
+        queryFeatureLayerView2(view.center, 991500, "intersects");
+
+        //*** CHALLENGE ***//
+        // queryFeatureLayer(view.center, 1500, "intersects", sql)
+        // queryFeatureLayerView(view.center, 1500, "intersects", sql)
+      });
+
+      view.on("click", function(event){
+        //*** ADD ***//
+        queryFeatureLayer(event.mapPoint, 991500, "intersects")
+        queryFeatureLayer2(event.mapPoint, 991500, "intersects")
+        queryFeatureLayerView(event.mapPoint, 991500, "intersects");
+        queryFeatureLayerView2(event.mapPoint, 991500, "intersects");
+        
+
+        //*** CHALLENGE ***//
+        // queryFeatureLayer(event.mapPoint, 1500, "intersects", sql)
+        // queryFeatureLayerView(event.mapPoint, 1500, "intersects", sql)
+      });
+
+
+      // Reference the feature layer to query
+
+      var featureLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/VhMjCzR3cIjEkh7L/arcgis/rest/services/RTCC_Cameras/FeatureServer/0/",
+      });
+
+       var symbol = {
+          type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+          style: "square",
+          color: "blue",
+          size: "80px",  // pixels
+          outline: {  // autocasts as new SimpleLineSymbol()
+            color: [ 255, 255, 0 ],
+            width: 3  // points
+          }
+        };
+
+      var renderer = {
+        type: "simple",  // autocasts as new SimpleRenderer()
+        symbol: symbol
+      };
+      
+      var surveillanceCrowdLayer = new FeatureLayer({
+        url: "https://services8.arcgis.com/sp4Zi81OTLKchaqF/arcgis/rest/services/StopWatching_SurveillanceCams_20200517_1/FeatureServer/0/",
+        // renderer: renderer,
+      });
+
+      map.add(surveillanceCrowdLayer, 0);
+
+     // Add a graphics layer to hold features and draw data
+
+      var graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+
+      function genCameras(result) {
+        // Only create the CSV once
+        if (cameras) return
+
+        cameras = [["Latitude", "Longitude", "Random ID"]]
+
+        result.features.forEach(function(element) {
+          // console.log(element)
+          cameras.push([
+            element.geometry.latitude,
+            element.geometry.longitude,
+            Math.random()
+          ])
+        })
+
+        console.log("Generated cameras " + cameras.length)
+      }
+
+      function addGraphics(result) {
+
+        // console.log("addGraphics")
+        // console.log(result.features)
+        updateCount(result.features.length)
+        genCameras(result)
+
+        graphicsLayer.removeAll();
+        result.features.forEach(function(feature){
+          var g = new Graphic({
+            geometry: feature.geometry,
+            attributes: feature.attributes,
+            symbol: {
+             type: "simple-marker",
+              color: [0,0,0],
+              outline: {
+               width: 1,
+               color: [0,255,255],
+             },
+              size: "6px"
+            },
+            popupTemplate: {
+             title: "Surveillance Camera Details ",
+             content:  feature.geometry.latitude + ", " + feature.geometry.longitude + " (lat, long)"
+            }
+          });
+          graphicsLayer.add(g);
+        });
+      }
+
+      function addGraphics2(result) {
+
+        console.log("addGraphics2")
+        // console.log(result.features)
+        updateCount(result.features.length)
+        genCameras(result)
+
+        graphicsLayer.removeAll();
+        result.features.forEach(function(feature){
+          var g = new Graphic({
+            geometry: feature.geometry,
+            attributes: feature.attributes,
+            symbol: {
+             type: "simple-marker",
+              color: [0,0,0],
+              outline: {
+               width: 1,
+               color: [205,7,7],
+             },
+              size: "16px"
+            },
+            popupTemplate: {
+             title: "Surveillance Camera Details ",
+             content:  feature.geometry.latitude + ", " + feature.geometry.longitude + " (lat, long)"
+            }
+          });
+          graphicsLayer.add(g);
+        });
+      }
+
+      // Server-side query
+
+      function queryFeatureLayer(point, distance, spatialRelationship, sqlExpression) {
+        var query = {
+          geometry: point,
+          distance: distance,
+          // spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          // where: sqlExpression
+        };
+        featureLayer.queryFeatures(query).then(function(result) {
+          // console.log("queryFeatures:")
+          // console.log(result.features)
+          addGraphics(result);
+        });
+      }
+
+
+      function queryFeatureLayer2(point, distance, spatialRelationship, sqlExpression) {
+        var query = {
+          geometry: point,
+          distance: distance,
+          // spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          // where: sqlExpression
+        };
+        surveillanceCrowdLayer.queryFeatures(query).then(function(result) {
+          console.log("queryFeatures2")
+          // console.log(result.features)
+          addGraphics2(result);
+        });
+        console.log('fail me')
+      }
+
+      // Client-side query
+
+      function queryFeatureLayerView(point, distance, spatialRelationship, sqlExpression){
+        if (!map.findLayerById(featureLayer.id)) {
+          featureLayer.outFields = ["*"];
+          map.add(featureLayer,0);
+        }
+        var query = {
+          geometry: point,
+          distance: distance,
+          // spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          // where: sqlExpression
+        };
+        // Wait for the layerview to be ready and then query features
+        view.whenLayerView(featureLayer).then(function(featureLayerView) {
+          if (featureLayerView.updating) {
+            var handle = featureLayerView.watch("updating", function(isUpdating){
+              if (!isUpdating) {
+                featureLayerView.queryFeatures(query).then(function(result) {
+                  addGraphics(result)
+                });
+                handle.remove();
+              }
+            });
+          } else {
+            featureLayerView.queryFeatures(query).then(function(result) {
+              addGraphics(result);
+            });
+          }
+        });
+      }
+
+            function queryFeatureLayerView2(point, distance, spatialRelationship, sqlExpression){
+        if (!map.findLayerById(surveillanceCrowdLayer.id)) {
+          surveillanceCrowdLayer.outFields = ["*"];
+          map.add(surveillanceCrowdLayer,0);
+        }
+        var query = {
+          geometry: point,
+          distance: distance,
+          // spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          // where: sqlExpression
+        };
+        // Wait for the layerview to be ready and then query features
+        view.whenLayerView(surveillanceCrowdLayer).then(function(featureLayerView) {
+          if (featureLayerView.updating) {
+            var handle = featureLayerView.watch("updating", function(isUpdating){
+              if (!isUpdating) {
+                featureLayerView.queryFeatures(query).then(function(result) {
+                  addGraphics2(result)
+                });
+                handle.remove();
+              }
+            });
+          } else {
+            featureLayerView.queryFeatures(query).then(function(result) {
+              addGraphics2(result);
+            });
+          }
+        });
+      }
+
+      function updateCount(count) {
+        const num = window.document.getElementById("num-cameras-holder")
+        num.textContent = count
+
+        const button = window.document.getElementById("download-button")
+        button.textContent = "Download CSV"
+        button.disabled = false
+      }
+    });
+
+    function downloadCsv() {
+      if (!cameras) {
+        console.log("Camera data not yet ready to downlaod")
+      } else {
+        const now = new Date()
+        const datevalues = [
+           now.getFullYear(),
+           now.getMonth()+1,
+           now.getDate()
+        ];
+
+        const datestr = datevalues.join("-")
+
+        // console.log(datestr)
+        const filename = "new-orleans-surveillance-cameras-" + datestr + ".csv"
+
+        let csvContent = "data:text/csv;charset=utf-8," 
+          + cameras.map(e => e.join(",")).join("\n");
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link); // Required for FF
+        link.click(); // This will download the data file named "my_data.csv".
+
+        console.log("Download window should have popped up.")
+      }
+    }
+
+  </script>
+</head>
+
+<body id="homeSection">
+
+  <!-- ========== HEADER ========== -->
+  <header id="header" class="u-header u-header--abs-top-md u-header--bg-transparent u-header--show-hide-md"
+          data-header-fix-moment="500"
+          data-header-fix-effect="slide">
+    <div class="u-header__section">
+      <div id="logoAndNav" class="container">
+        <!-- Nav -->
+        <nav class="js-mega-menu navbar navbar-expand-md u-header__navbar u-header__navbar--no-space">
+          <!-- Logo -->
+          <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center" href="index.html" aria-label="Front">
+          <img src="/assets/eos/eos-logo.svg" alt="Eye on Surveillance" style="width:64px">
+
+          </a>
+          <!-- End Logo -->
+
+          <!-- Responsive Toggle Button -->
+          <button type="button" class="navbar-toggler btn u-hamburger"
+                  aria-label="Toggle navigation"
+                  aria-expanded="false"
+                  aria-controls="navBar"
+                  data-toggle="collapse"
+                  data-target="#navBar">
+            <span id="hamburgerTrigger" class="u-hamburger__box">
+              <span class="u-hamburger__inner"></span>
+            </span>
+          </button>
+          <!-- End Responsive Toggle Button -->
+
+          <!-- Navigation -->
+          <div id="navBar" class="collapse navbar-collapse u-header__navbar-collapse">
+            <ul class="js-scroll-nav navbar-nav align-items-md-center u-header__navbar-nav">
+              <li class="nav-item u-header__nav-item">
+                <a class="nav-link u-header__nav-link" href="/index.html">Home</a>
+              </li>
+              <li class="nav-item u-header__nav-item active">
+                <a class="nav-link u-header__nav-link" href="/new-orleans.html">Surveillance in N.O.</a>
+              </li>
+              <li class="nav-item u-header__nav-item">
+                <a class="nav-link u-header__nav-link" href="/facial-recognition-ban.html">Facial Recognition Ban</a>
+              </li>
+            </ul>
+          </div>
+          <!-- End Navigation -->
+        </nav>
+        <!-- End Nav -->
+      </div>
+    </div>
+  </header>
+  <!-- ========== END HEADER ========== -->
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="content" role="main">
+    
+   <div class="position-relative z-index-4 space-2 ">
+      <div class="bg-primary">
+       <a href="https://docs.google.com/document/d/1V33SRsHiIRBtrSc48C1zpAztIdkoQDnjPsKRwA0fPa4/edit?usp=sharing" target="_blank">
+         <div class="container">
+
+          <div class="row">
+            <div class="col">
+
+              <h4 class="my-3 text-white">
+              See our fact sheet about surveillance in New Orleans</h4>
+            </div>
+          </div>
+        </div>
+        </a>
+      </div>
+    </div>
+        <!-- Hero Section -->
+    <div class="container space-2 space-top-lg-3">
+      <div class="w-lg-80 text-center mx-lg-auto">
+        <div class="">
+          <h1 class="display-4 font-weight-semi-bold">N.O. Surveillance Cameras</h1>
+          <p class="lead font-weight-normal"><a href="http://nolagis.maps.arcgis.com/apps/webappviewer/index.html?id=47ce86e8b9ec4d119d9eda5659d28a3e">Source: RTCC</a></p>
+          <h4>Num cameras public: <span class=text-info id="num-cameras-holder">(loading)</span></h4>
+          <h4> vs.</h4>
+          <h4>Num surveillance cameras: <span class=text-primary>401</span></h4>
+          <h6>RTCC published fewer surveillance cameras publicly than the number they quoted in January 2019</h6>
+        </div>
+      </div>
+
+      <div class="row space-1">
+        <div class="col">
+          <button id="download-button" type="button" onclick="downloadCsv()" class="btn btn-lg btn-block btn-outline-primary" disabled="">Download CSV (loading...)</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div id="viewDiv" style="height:500px"></div>
+
+<!--           <iframe style="width: 100%; height: 500px;" src="//www.zeemaps.com/pub?group=3001614&amp;locate=1&amp;simpleadd=1" frameborder="0"></iframe>      -->
+        </div>
+      </div>
+
+<!--       <div class="row">
+        <div class="col">
+          <h6>Legend</h6>
+          <p>Black = Surveillance Cameras</p>
+          <p class="text-primary">Red = Speed Cameras</p>
+        </div>
+      </div> -->
+    </div>
+
+
+    <!-- End Hero Section -->
+
+  </main>
+  <!-- ========== END MAIN CONTENT ========== -->
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="container space-1">
+    <div class="row align-items-md-center">
+      <div class="col-md-3 mb-4 mb-md-0 col-sm-5 col-xs-6">
+        <div class="d-flex align-items-center">
+          <a class="d-inline-flex align-items-center" href="index.html" aria-label="Front">
+          <img src="assets/eos/eos-logo.svg" alt="Eye on Surveillance" style="width:64px">
+            <span class="ml-3 text-primary">Eye on Surveillance</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-sm-5 offset-md-6 offset-sm-2 col-md-3 text-sm-right col-xs-6">
+
+        <!-- Social Networks -->
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <a class="btn btn-sm btn-icon btn-soft-dark btn-bg-transparent rounded-circle" href="https://www.facebook.com/keepaneyeonsurveillance">
+              <span class="fab fa-facebook-f btn-icon__inner"></span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a class="btn btn-sm btn-icon btn-soft-dark btn-bg-transparent rounded-circle" href="mailto:info@eyeonsurveillance.org">
+              <span class="fas fa-envelope btn-icon__inner"></span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a class="btn btn-sm btn-icon btn-soft-dark btn-bg-transparent rounded-circle" href="https://github.com/marvinmarnold/eyeonsurveillance.org">
+              <span class="fab fa-github btn-icon__inner"></span>
+            </a>
+          </li>
+        </ul>
+        <!-- End Social Networks -->
+      </div>
+    </div>
+  </footer>
+  <!-- ========== END FOOTER ========== -->
+
+  <!-- Go to Top -->
+  <a class="js-go-to u-go-to" href="#"
+    data-position='{"bottom": 15, "right": 15 }'
+    data-type="fixed"
+    data-offset-top="400"
+    data-compensation="#header"
+    data-show-effect="slideInUp"
+    data-hide-effect="slideOutDown">
+    <span class="fas fa-arrow-up u-go-to__inner"></span>
+  </a>
+  <!-- End Go to Top -->
+
+
+
+  <!-- JS Plugins Init. -->
+
+</body>
+</html>
