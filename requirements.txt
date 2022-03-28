@@ -1,0 +1,4 @@
+pandas
+geopy
+scipy
+numpy

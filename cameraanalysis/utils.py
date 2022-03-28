@@ -1,14 +1,15 @@
-import sys
-
-sys.path.append("../")
 import pandas as pd
 from geopy.geocoders import GoogleV3
 from scipy import spatial
 import numpy as np
 
+CAMERA_LOCATIONS_CSV = './data/new_orleans_cameras_3_11_2022.csv'
+CALLS_FOR_SERVICE_CSV = './data/calls_for_service_2022_3_21_2022.csv'
+CAMERAS_ZIP_CSV = './data/camera_zips.csv'
+
 
 def convert_coordinates_to_address():
-    cameras = pd.read_csv("new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
+    cameras = pd.read_csv(CAMERA_LOCATIONS_CSV).drop(columns=["set"])
     df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
     gkey = ""
     geolocator = GoogleV3(api_key=gkey)
@@ -50,13 +51,13 @@ def filter_zips_cameras(df):
 
 def concat_zips():
     dfa = (
-        pd.read_csv("calls_for_service_2022_3_21_2022.csv")
+        pd.read_csv(CALLS_FOR_SERVICE_CSV)
         .pipe(filter_zips_calls_for_service)
         .pipe(drop_rows_missing_zips)
     )
 
     dfb = (
-        pd.read_csv("camera_zips.csv")
+        pd.read_csv(CAMERAS_ZIP_CSV)
         .rename(columns={"0": "address", "cameras": "coordinates"})
         .pipe(extract_zips)
         .pipe(filter_zips_cameras)
@@ -81,28 +82,32 @@ def extract_coordinates(df):
     return df[~((df.latitude == "") & (df.longitude == ""))]
 
 
-def neighbors():
-    dfa = pd.read_csv("calls_for_service_2022_3_21_2022.csv").pipe(extract_coordinates)
+def distance_from_calls_to_camera():
+    print("Loading calls for service...")
+    calls_for_service_df = pd.read_csv(CALLS_FOR_SERVICE_CSV).pipe(extract_coordinates)
 
-    dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
+    print("Loading camera locations...")
+    camera_locations_df = pd.read_csv(CAMERA_LOCATIONS_CSV)
 
-    calls = list(zip(dfa.latitude, dfa.longitude))
+    print("Pre-processing data...")
+    calls_for_service_list = list(zip(calls_for_service_df.latitude, calls_for_service_df.longitude))
+    camera_locations_list = list(zip(camera_locations_df.latitude, camera_locations_df.longitude))
+    camera_locations_coordinates = np.array(camera_locations_list)
 
-    cameras = list(zip(dfb.latitude, dfb.longitude))
+    all_distances = []
+    print("Computing distances...")
+    for camera_location_coordinates in camera_locations_coordinates[0:5]:
+        tree = spatial.KDTree(calls_for_service_list)
+        distances = tree.query([camera_location_coordinates])
+        print(distances)
+        all_distances.append(distances)
 
-    l = []
-    coordinates = np.array(cameras)
-    for coord in coordinates:
-        tree = spatial.KDTree(calls)
-        distances = tree.query([((coord))])
-        l.append(distances)
-        df = pd.DataFrame(l, columns=["distance", "index"])
-
-    df.loc[:, "distance"] = df.distance.astype(str).str.replace(
+    all_distances_df = pd.DataFrame(all_distances, columns=["distance", "index"])
+    all_distances_df.loc[:, "distance"] = all_distances_df.distance.astype(str).str.replace(
         r"(\[|\])", "", regex=True
     )
     # avg distance of cameras to a call for service = 0.000146764
 
     # avg distance of calls for service to a camera = 0.003092017
 
-    return df
+    return all_distances_df

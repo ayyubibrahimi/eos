@@ -2,6 +2,16 @@
 
 Data and analysis of surveillance cameras in New Orleans.
 
+## Quickstart
+
+- Setup Python venv and install dependencies
+```
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
+- Run: `python cameraanlysis`
+
 ## Data
 - Calls for Service (911 calls): Source data.nola.gov
 - New Orleans Cameras: Source RTCC using script below
