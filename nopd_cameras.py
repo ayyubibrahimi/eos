@@ -101,5 +101,8 @@ def neighbors():
     df.loc[:, "distance"] = df.distance.astype(str).str.replace(
         r"(\[|\])", "", regex=True
     )
+    # avg distance of cameras to a call for service = 0.000146764
+
+    # avg distance of calls for service to a camera = 0.003092017
 
     return df
