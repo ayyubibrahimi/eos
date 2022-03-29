@@ -82,7 +82,7 @@ def extract_coordinates(df):
 
 
 def neighbors():
-    dfa = pd.read_csv("calls_for_service_2022_3_21_2022.csv").pipe(extract_coordinates)
+    dfa = pd.read_csv("calls_for_service_3_21_2022_coordinates.csv")
 
     dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
 
