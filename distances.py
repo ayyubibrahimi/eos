@@ -19,8 +19,10 @@ def distance():
         miles = d * 3958.8
         yards = miles * 1760
         l.append(yards)
-        df = pd.DataFrame(l)
+        df = pd.DataFrame(l, columns=["distances"])
 
+    # avg distance: df.distances.sum()/len(df)
+    
     # nearest call for service to camera: 16.67260112 is the avg distance in yards for the 432 known NOPD cameras
 
     # nearest camera to a call for service: 350.3729814 is the avg distance in yards for the 79763 calls for service
@@ -28,4 +30,4 @@ def distance():
     # resource
     # https://towardsdatascience.com/using-scikit-learns-binary-trees-to-efficiently-find-latitude-and-longitude-neighbors-909979bd929b
 
-    return df
+    return dfa
