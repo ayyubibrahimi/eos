@@ -7,12 +7,12 @@ import numpy as np
 
 
 def distance():
-    dfa = pd.read_csv("calls_for_service_3_21_2022.csv")
+    dfa = pd.read_csv("calls_for_service_6-7-2022.csv")
 
     # filter for violent crimes (list of all crimes below)
     dfa = dfa[
         (
-            dfa.typetext.isin(
+            dfa.TypeText.isin(
                 [
                     "AGGRAVATED ASSAULT",
                     "CARJACKING",
@@ -43,10 +43,10 @@ def distance():
         )
     ]
 
-    dfa.loc[:, "typetext"] = dfa.typetext.fillna("")
-    dfa = dfa[~(dfa.typetext == "")]
+    dfa.loc[:, "TypeText"] = dfa.TypeText.fillna("")
+    dfa = dfa[~(dfa.TypeText == "")]
 
-    locations = (dfa.location.str.lower().str.strip().str.extract(r"point \((-.+\..+) (.+\..+)\)"))
+    locations = (dfa.Location.str.lower().str.strip().str.extract(r"point \((-.+\..+) (.+\..+)\)"))
 
     dfa.loc[:, "latitude"] = locations[1].fillna("")
     dfa = dfa[~((dfa.latitude == ""))]
@@ -57,8 +57,8 @@ def distance():
 
     dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
 
-    bt = BallTree(np.deg2rad(dfa[["latitude", "longitude"]].values), metric="haversine")
-    distances, indices = bt.query(np.deg2rad(np.c_[dfb["latitude"], dfb["longitude"]]))
+    bt = BallTree(np.deg2rad(dfb[["latitude", "longitude"]].values), metric="haversine")
+    distances, indices = bt.query(np.deg2rad(np.c_[dfa["latitude"], dfa["longitude"]]))
 
     l = []
     for d in distances:
@@ -67,8 +67,9 @@ def distance():
         l.append(yards)
         df = pd.DataFrame(l, columns=["distances"])
 
-    # nearest call for service to camera: 218 is the avg distance in yards for the 432 known NOPD cameras for violent crimes
-    # nearest camera to a call for service: 302 the avg distance in yards for the 1069 violent calls for service (as of 3/21)
+    # Nearest camera to a violent crime: 148 is the avg distance in yards from a camera (432) to a violent crime
+    # Nearest call for service to a camera: 316 the avg distance in yards from a violent crime (2250) to a camera 
+    # Note: as of 6-7, there were 2250 calls for service for violent crimes, as defined above
     
     # add identifer for camera
 
