@@ -1,47 +1,62 @@
 import sys
+
 sys.path.append("../")
 import pandas as pd
 
-
+"""
+rtcc.csv includes all the item numbers for which NOPD has requested RTCC footage.
+rtcc item numbers can be merged on item numbers from NOPD's electronic police reports 
+"""
 
 def clean():
-
     df1 = pd.read_csv("electronic_police_report_2018.csv")
     df2 = pd.read_csv("electronic_police_report_2019.csv")
     df3 = pd.read_csv("electronic_police_report_2020.csv")
     df4 = pd.read_csv("electronic_police_report_2021.csv")
     df5 = pd.read_csv("electronic_police_report_2022.csv")
-    
+
     dfs = [df1, df2, df3, df4, df5]
 
     dfa = pd.concat(dfs, join="outer")
-    
-    dfb = pd.read_csv("rtcc.csv", encoding="cp1252").rename(columns={"Item_number": "item_number"})
-    
+
+    dfb = pd.read_csv("rtcc.csv", encoding="cp1252").rename(
+        columns={"Item_number": "item_number"}
+    )
+
     df = pd.merge(dfa, dfb, on="item_number")
 
     # review district
     # review signal description
     # review charge description
-    # offender demographics 
+    # offender demographics
     return df.to_csv("rtcc_merged.csv", index=False)
+
 
 def filter_race(df):
     df.loc[:, "offender_race"] = df.offender_race.fillna("").str.lower().str.strip()
-        # .str.replace("unknown", "non-black", regex=False)\
-        # .str.replace("hispanic", "non-black", regex=False)\
-        # .str.replace("asian", "non-black", regex=False)\
-        # .str.replace("white", "non-black", regex=False)\
-        # .str.replace(r"amer\. ind\.", "non-black", regex=True)
+    # .str.replace("unknown", "non-black", regex=False)\
+    # .str.replace("hispanic", "non-black", regex=False)\
+    # .str.replace("asian", "non-black", regex=False)\
+    # .str.replace("white", "non-black", regex=False)\
+    # .str.replace(r"amer\. ind\.", "non-black", regex=True)
     return df[~((df.offender_race == ""))]
 
+
 def filter_gender(df):
-    df.loc[:, "offender_gender"] = df.offender_gender.str.lower().str.strip().fillna("")\
+    df.loc[:, "offender_gender"] = (
+        df.offender_gender.str.lower()
+        .str.strip()
+        .fillna("")
         .str.replace("unknown", "", regex=False)
-    df = df[~((df.offender_gender ==  ""))]
+    )
+    df = df[~((df.offender_gender == ""))]
 
     df = df[(df.offender_gender.isin(["female"]))]
-    ### male 
+
+    #     df.loc[:, "offenderstatus"] = df.offenderstatus.str.lower().str.strip().fillna("")
+
+    #     df = df[(df.offenderstatus.isin(["arrested"]))]
+    ### male
     """
     2018  black        0.859627
           non-black    0.140373
@@ -103,11 +118,23 @@ def filter_year(df):
               asian            0.004020
               hispanic         0.002010
     """
-    return df 
+    return df
+
+
+def extract_years(df):
+    years = df.occurred_date_time.astype(str).str.extract(r"(\w{4})")
+
+    df.loc[:, "year"] = years[0]
+    """
+      2021    5600
+      2020    5370
+      2019    4102
+      2018    2559
+      2022    1492
+      """
+    return df
+
 
 def merged():
-    df = pd.read_csv("rtcc_merged.csv")\
-        .pipe(filter_race)\
-        .pipe(filter_gender)\
-        .pipe(filter_year)
-    return df 
+    df = pd.read_csv("rtcc_merged.csv").pipe(extract_years)
+    return df

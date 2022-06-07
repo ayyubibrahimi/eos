@@ -5,23 +5,48 @@ import pandas as pd
 from sklearn.neighbors import BallTree
 import numpy as np
 
+
 def distance():
     dfa = pd.read_csv("calls_for_service_3_21_2022.csv")
 
-    dfa = dfa[(dfa.typetext.isin(["AGGRAVATED ASSAULT", "CARJACKING", "AGGRAVATED ASSAULT DOMESTIC", "ARMED ROBBERY WITH GUN", "AGGRAVATED BATTERY BY SHOOTING", 
-    "AGGRAVATED BATTERY DOMESTIC", "AGGRAVATED BURGLARY", "AGGRAVATED BATTERY BY CUTTING", 
-    "AGGRAVATED RAPE", "ARMED ROBBERY", "SIMPLE RAPE", "HOMICIDE BY SHOOTING", "ARMED ROBBERY WITH KNIFE", 
-    "AGGRAVATED KIDNAPPING", "SIMPLE ASSAULT DOMESTIC", "AGGRAVATED RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE", 
-    "AGGRAVATED BURGLARY DOMESTIC", "AGGRAVATED RAPE MALE VICTIM", "HOMICIDE", "HOMICIDE BY CUTTING",
-    "ILLEGAL CARRYING OF WEAPON- KNIFE", "SIMPLE RAPE MALE VICTIM", "AGGRAVATED ARSON", "SIMPLE RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE",
-    "HIT & RUN FATALITY"]))]
+    # filter for violent crimes (list of all crimes below)
+    dfa = dfa[
+        (
+            dfa.typetext.isin(
+                [
+                    "AGGRAVATED ASSAULT",
+                    "CARJACKING",
+                    "AGGRAVATED ASSAULT DOMESTIC",
+                    "ARMED ROBBERY WITH GUN",
+                    "AGGRAVATED BATTERY BY SHOOTING",
+                    "AGGRAVATED BATTERY DOMESTIC",
+                    "AGGRAVATED BURGLARY",
+                    "AGGRAVATED BATTERY BY CUTTING",
+                    "AGGRAVATED RAPE",
+                    "ARMED ROBBERY",
+                    "SIMPLE RAPE",
+                    "HOMICIDE BY SHOOTING",
+                    "ARMED ROBBERY WITH KNIFE",
+                    "AGGRAVATED KIDNAPPING",
+                    "SIMPLE ASSAULT DOMESTIC",
+                    "AGGRAVATED RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE",
+                    "AGGRAVATED BURGLARY DOMESTIC",
+                    "AGGRAVATED RAPE MALE VICTIM",
+                    "HOMICIDE",
+                    "HOMICIDE BY CUTTING",
+                    "ILLEGAL CARRYING OF WEAPON- KNIFE",
+                    "SIMPLE RAPE MALE VICTIM",
+                    "AGGRAVATED ARSON",
+                    "SIMPLE RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE",
+                ]
+            )
+        )
+    ]
 
     dfa.loc[:, "typetext"] = dfa.typetext.fillna("")
     dfa = dfa[~(dfa.typetext == "")]
 
-    locations = dfa.location.str.lower().str.strip()\
-        .str.extract(r"point \((-.+\..+) (.+\..+)\)")
-
+    locations = (dfa.location.str.lower().str.strip().str.extract(r"point \((-.+\..+) (.+\..+)\)"))
 
     dfa.loc[:, "latitude"] = locations[1].fillna("")
     dfa = dfa[~((dfa.latitude == ""))]
@@ -29,8 +54,6 @@ def distance():
     dfa.loc[:, "longitude"] = locations[0].fillna("")
     dfa = dfa[~((dfa.longitude == ""))]
     dfa.loc[:, "longitude"] = dfa.longitude.astype(float)
-    
-
 
     dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
 
@@ -44,22 +67,14 @@ def distance():
         l.append(yards)
         df = pd.DataFrame(l, columns=["distances"])
 
-    # avg distance: df.distances.sum()/len(df)
-
+    # nearest call for service to camera: 218 is the avg distance in yards for the 432 known NOPD cameras for violent crimes
+    # nearest camera to a call for service: 302 the avg distance in yards for the 1069 violent calls for service (as of 3/21)
+    
     # add identifer for camera
-    
-    # nearest call for service to camera: 16.67260112 is the avg distance in yards for the 432 known NOPD cameras
 
-    # nearest camera to a call for service: 350.3729814 is the avg distance in yards for the 79763 calls for service
-
-    # resource
-    # https://towardsdatascience.com/using-scikit-learns-binary-trees-to-efficiently-find-latitude-and-longitude-neighbors-909979bd929b
-
-    
-
-    ### all charges
+    # all crimes
     """ 'BUSINESS BURGLARY', 'RECOVERY OF REPORTED STOLEN VEHICLE',
-       'COMPLAINT OTHER', 'MEDICAL', 'CARJACKING', 'AGGRAVATED ASSAULT',
+       'COMPLAINT OTHER', 'MEDICAL',xc 'CARJACKING', 'AGGRAVATED ASSAULT',
        'SIMPLE BURGLARY VEHICLE', 'UNAUTHORIZED USE OF VEHICLE',
        'SIMPLE CRIMINAL DAMAGE', 'DOMESTIC DISTURBANCE', 'AUTO ACCIDENT',
        'HIT & RUN', 'THEFT', 'AUTO THEFT', 'PICKPOCKET',
@@ -126,4 +141,4 @@ def distance():
        'HOSTAGE SITUATION', 'OFFICER NEEDS ASSISTANCE',
        'HIT & RUN FATALITY'"""
 
-    return dfa
+    return df
