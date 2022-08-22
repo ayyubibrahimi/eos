@@ -46,7 +46,11 @@ def distance():
     dfa.loc[:, "TypeText"] = dfa.TypeText.fillna("")
     dfa = dfa[~(dfa.TypeText == "")]
 
-    locations = (dfa.Location.str.lower().str.strip().str.extract(r"point \((-.+\..+) (.+\..+)\)"))
+    locations = (
+        dfa.Location.str.lower()
+        .str.strip()
+        .str.extract(r"point \((-.+\..+) (.+\..+)\)")
+    )
 
     dfa.loc[:, "latitude"] = locations[1].fillna("")
     dfa = dfa[~((dfa.latitude == ""))]
@@ -68,10 +72,65 @@ def distance():
         df = pd.DataFrame(l, columns=["distances"])
 
     # Nearest camera to a violent crime: 148 is the avg distance in yards from a camera (432) to a violent crime
-    # Nearest call for service to a camera: 316 the avg distance in yards from a violent crime (2250) to a camera 
+    # Nearest call for service to a camera: 316 the avg distance in yards from a violent crime (2250) to a camera
     # Note: as of 6-7, there were 2250 calls for service for violent crimes, as defined above
-    
+    # using the 6-7 data, I did an calculated avg distances in yards with an alternative filtering of crimes
+
     # add identifer for camera
+
+    # filter 2: 35, and 372 are the avg distances in yards
+    """
+      "BUSINESS BURGLARY",
+                    "CARJACKING",
+                    "AGGRAVATED ASSAULT",
+                    "SIMPLE BURGLARY VEHICLE",
+                    "DOMESTIC DISTURBANCE",
+                    "HIT & RUN",
+                    "SIMPLE BURGLARY",
+                    "AGGRAVATED ASSAULT DOMESTIC",
+                    "RECKLESS DRIVING",
+                    "DISCHARGING FIREARM",
+                    "SIMPLE BATTERY",
+                    "HIT & RUN WITH INJURIES",
+                    "SIMPLE BATTERY DOMESTIC",
+                    "RESIDENCE BURGLARY",
+                    "AGGRAVATED BATTERY BY SHOOTING",
+                    "SIMPLE ROBBERY",
+                    "AGGRAVATED BATTERY DOMESTIC",
+                    "FIGHT",
+                    "AGGRAVATED BURGLARY",
+                    "AGGRAVATED BATTERY BY CUTTING",
+                    "AGGRAVATED RAPE",
+                    "SIMPLE BURGLARY DOMESTIC",
+                    "ARMED ROBBERY",
+                    "SIMPLE RAPE",
+                    "SIMPLE ROBBERY",
+                    "AGGRAVATED BATTERY",
+                    "HOMICIDE BY SHOOTING",
+                    "ARMED ROBBERY WITH KNIFE",
+                    "AGGRAVATED KIDNAPPING",
+                    "SEXUAL BATTERY",
+                    "SIMPLE KIDNAPPING",
+                    "MISDEMEANOR SEXUAL BATTERY",
+                    "SIMPLE ASSAULT DOMESTIC",
+                    "HIT & RUN POLICE VEHICLE",
+                    "SIMPLE ASSAULT",
+                    "AGGRAVATED RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE",
+                    "AGGRAVATED BURGLARY DOMESTIC",
+                    "AGGRAVATED RAPE MALE VICTIM",
+                    "OFFICER NEEDS ASSISTANCE, LIFE IN DANGER",
+                    "SIMPLE ARSON",
+                    "HOMICIDE",
+                    "HIT & RUN CITY VEHICLE",
+                    "HOMICIDE BY CUTTING",
+                    "EXPLOSION",
+                    "SIMPLE RAPE MALE VICTIM",
+                    "FIREBOMB",
+                    "AGGRAVATED ARSON",
+                    "SIMPLE RAPE UNFOUNDED BY SPECIAL VICTIMS OR CHILD ABUSE",
+                    "HOSTAGE SITUATION",
+                    "HIT & RUN FATALITY",
+    """
 
     # all crimes
     """ 'BUSINESS BURGLARY', 'RECOVERY OF REPORTED STOLEN VEHICLE',

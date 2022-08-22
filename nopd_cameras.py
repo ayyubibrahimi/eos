@@ -2,12 +2,9 @@ import sys
 
 sys.path.append("../")
 import pandas as pd
-from geopy.geocoders import GoogleV3
+from geopy.geocoders import GoogleV3, Nominatim
 from scipy import spatial
 import numpy as np
-
-
-## code below joins the camera and calls for service dataframes on coordinates
 
 
 def extract_coordinates_from_calls_for_service(df):
@@ -25,7 +22,7 @@ def extract_coordinates_from_calls_for_service(df):
     return df[~((df.latitude == "") & (df.longitude == ""))]
 
 
-def join_coordinates():
+def join_call_for_serice_and_rtcc_coordinates():
     dfa = pd.read_csv("calls_for_service_3_21_2022.csv").pipe(
         extract_coordinates_from_calls_for_service
     )
@@ -36,10 +33,7 @@ def join_coordinates():
     return df
 
 
-### code below creates joins cameras and calls_for_services on zip codes
-
-
-def convert_camera_coordinates_to_address():
+def convert_coordinates_to_address():
     cameras = pd.read_csv("new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
     df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
     gkey = ""
@@ -53,6 +47,49 @@ def convert_camera_coordinates_to_address():
         locations.append(address)
         df = pd.DataFrame(locations)
     return df
+
+
+def convert_address_to_coordinates():
+    cameras = pd.read_csv("safecam.csv")
+    gkey = ""
+    # geolocator = GoogleV3(api_key=gkey)
+    geolocator = Nominatim(user_agent="my_user_agent")
+
+    latitude = []
+    longitude = []
+    for row in cameras["address"]:
+        address = geolocator.geocode(row)
+        lat, lon = address.latitude, address.longitude
+        latitude.append(lat)
+        longitude.append(lon)
+        coordinates = list(zip(latitude, longitude))
+        df = pd.DataFrame(coordinates)
+    return df
+
+
+def read_safecam_coordinates():
+    df = pd.read_csv("safecam_coordinates.csv").rename(
+        columns={"0": "latitude", "1": "longitude"}
+    )
+    return df
+
+
+def append_safecam_and_rtcc_cameras():
+    rtcc = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
+    rtcc = pd.DataFrame(rtcc, columns=["latitude", "longitude"])
+
+    rtcc["set"] = "rtcc"
+
+    safecam = pd.read_csv("safecam_coordinates.csv").rename(
+        columns={"0": "latitude", "1": "longitude"}
+    )
+
+    safecam["set"] = "safecam"
+
+    safecam.to_csv("safecam.csv", index=False)
+
+    rtcc.to_csv("nopd.csv", index=False)
+    return safecam
 
 
 def extract_zips(df):
