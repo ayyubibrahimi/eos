@@ -59,7 +59,7 @@ def distance():
     dfa = dfa[~((dfa.longitude == ""))]
     dfa.loc[:, "longitude"] = dfa.longitude.astype(float)
 
-    dfb = pd.read_csv("new_orleans_cameras_3_11_2022_french_quarter_filtered.csv")
+    dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
 
     bt = BallTree(np.deg2rad(dfa[["latitude", "longitude"]].values), metric="haversine")
     distances, indices = bt.query(np.deg2rad(np.c_[dfb["latitude"], dfb["longitude"]]))
