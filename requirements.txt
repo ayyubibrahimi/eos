@@ -2,3 +2,4 @@ pandas
 geopy
 scipy
 numpy
+sklearn
