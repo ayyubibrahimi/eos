@@ -49,74 +49,64 @@ def filter_gender(df):
         .fillna("")
         .str.replace("unknown", "", regex=False)
     )
-    df = df[~((df.offender_gender == ""))]
-
-    df = df[(df.offender_gender.isin(["female"]))]
-
-    #     df.loc[:, "offenderstatus"] = df.offenderstatus.str.lower().str.strip().fillna("")
-
-    #     df = df[(df.offenderstatus.isin(["arrested"]))]
-    ### male
-    """
-    2018  black        0.859627
-          non-black    0.140373
-    2019  black        0.882860
-          non-black    0.117140
-    2020  black        0.930614
-          non-black    0.069386
-    2021  black        0.880707
-          non-black    0.119293
-    2022  black        0.875145
-          non-black    0.124855 """
-
-    ### female
-    """
-    2018  black        0.718876
-          non-black    0.281124
-    2019  black        0.883077
-          non-black    0.116923
-    2020  black        0.875000
-          non-black    0.125000
-    2021  black        0.848259
-          non-black    0.151741
-    2022  black        0.934783
-          non-black    0.065217 
-    """
+      # df = df[~((df.offender_gender == ""))]
+      # df = df[(df.offender_gender.isin(["female"]))]
+      # df.loc[:, "offenderstatus"] = df.offenderstatus.str.lower().str.strip().fillna("")
+      # df = df[(df.offenderstatus.isin(["arrested"]))]
+    
     return df
 
 
 def filter_year(df):
-    df = df[(df.year.astype(str).isin(["2021"]))]
-
+    df = df[(df.year.astype(str).isin(["2018", "2019", "2020", "2021", "2022"]))]
+    # the following figures are percentages of the "offender_race" value
+    ### 2018 - 2022
+    """
+      black         0.768292
+      unknown       0.152651
+      white         0.068554
+      hispanic      0.009226
+      asian         0.001065
+      -amer. ind.    0.000213
+    """
+    ### 2022
+    """
+      black      0.660252
+      unknown    0.297557
+      white      0.039230
+      asian      0.002961
+    """
     ### 2021
     """
-    1         black            0.917073
-              white            0.060976
-              unknown          0.021951
-    2         black            0.870833
-              white            0.129167
-    3         black            0.928000
-              unknown          0.056000
-              white            0.016000
-    4         black            0.809917
-              unknown          0.157025
-              white            0.033058
-    5         black            0.953704
-              white            0.024691
-              unknown          0.021605
-    6         black            0.952239
-              unknown          0.023881
-              white            0.023881
-    7         black            0.903553
-              unknown          0.060914
-              white            0.032149
-              asian            0.001692
-              hispanic         0.001692
-    8         black            0.792965
-              white            0.152764
-              unknown          0.048241
-              asian            0.004020
-              hispanic         0.002010
+      black       0.663802
+      unknown     0.279270
+      white       0.055209
+      asian       0.001074
+      hispanic    0.000644
+    """
+    ### 2020
+    """
+      black         0.867308
+      unknown       0.069408
+      white         0.046369
+      hispanic      0.016040
+      amer. ind.    0.000875
+    """
+    ### 2019
+    """
+      black       0.849009
+      white       0.091532
+      unknown     0.044685
+      hispanic    0.013694
+      asian       0.001081
+    """
+    ### 2018
+    """
+      black       0.804891
+      white       0.129187
+      unknown     0.046252
+      hispanic    0.018075
+      asian       0.001595
     """
     return df
 
@@ -136,5 +126,5 @@ def extract_years(df):
 
 
 def merged():
-    df = pd.read_csv("rtcc_merged.csv").pipe(extract_years)
+    df = pd.read_csv("rtcc_merged.csv").pipe(filter_year).pipe(filter_race)
     return df
