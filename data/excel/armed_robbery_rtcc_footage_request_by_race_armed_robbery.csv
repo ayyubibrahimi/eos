@@ -1,0 +1,5 @@
+offender_race,charge_description,rtcc_footage_requested,rtcc_footage_requested_percent,rtcc_footage_requested_percent_counts
+black,ARMED ROBBERY,no,0.787313433,1477
+black,ARMED ROBBERY,yes,0.212686567,399
+white,ARMED ROBBERY,no,0.892857143,50
+white,ARMED ROBBERY,yes,0.107142857,6
