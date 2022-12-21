@@ -1,0 +1,91 @@
+offender_race,charge_description,rtcc_requested,rtcc_requested
+amer. ind.,AGG. BATTERY,no,1
+unknown,AGG. BATTERY,no,210
+unknown,AGG. BATTERY,yes,114
+hispanic,AGG. BATTERY,no,16
+white,AGG. BATTERY,no,91
+black,AGG. BATTERY,yes,191
+black,AGG. BATTERY,no,846
+white,AGG. BATTERY,yes,16
+native hawaiian or other pacific islander,AGG. BATTERY,no,2
+asian,AGG. BATTERY,no,3
+hispanic,AGGRAVATED ASSAULT WITH A FIREARM,yes,2
+white,AGGRAVATED ASSAULT WITH A FIREARM,no,84
+white,AGGRAVATED ASSAULT WITH A FIREARM,yes,11
+hispanic,AGGRAVATED ASSAULT WITH A FIREARM,no,14
+unknown,AGGRAVATED ASSAULT WITH A FIREARM,no,60
+amer. ind.,AGGRAVATED ASSAULT WITH A FIREARM,no,1
+unknown,AGGRAVATED ASSAULT WITH A FIREARM,yes,16
+black,AGGRAVATED ASSAULT WITH A FIREARM,yes,146
+black,AGGRAVATED ASSAULT WITH A FIREARM,no,1112
+asian,AGGRAVATED ASSAULT WITH A FIREARM,no,3
+black,ARMED ROBBERY,no,592
+unknown,ARMED ROBBERY,no,32
+asian,ARMED ROBBERY,no,1
+unknown,ARMED ROBBERY,yes,12
+white,ARMED ROBBERY,no,31
+hispanic,ARMED ROBBERY,yes,1
+hispanic,ARMED ROBBERY,no,8
+white,ARMED ROBBERY,yes,7
+black,ARMED ROBBERY,yes,252
+unknown,SECOND DEGREE MURDER,yes,63
+white,SECOND DEGREE MURDER,yes,6
+white,SECOND DEGREE MURDER,no,6
+black,SECOND DEGREE MURDER,no,72
+black,SECOND DEGREE MURDER,yes,79
+unknown,SECOND DEGREE MURDER,no,40
+unknown,SIMPLE BATTERY,no,202
+unknown,SIMPLE BATTERY,yes,3
+asian,SIMPLE BATTERY,no,13
+hispanic,SIMPLE BATTERY,no,49
+native hawaiian or other pacific islander,SIMPLE BATTERY,no,1
+black,SIMPLE BATTERY,yes,138
+white,SIMPLE BATTERY,yes,26
+black,SIMPLE BATTERY,no,2692
+white,SIMPLE BATTERY,no,443
+unknown,SIMPLE BURGLARY,yes,176
+white,SIMPLE BURGLARY,yes,15
+unknown,SIMPLE BURGLARY,no,9616
+white,SIMPLE BURGLARY,no,400
+hispanic,SIMPLE BURGLARY,no,15
+amer. ind.,SIMPLE BURGLARY,no,1
+asian,SIMPLE BURGLARY,no,9
+black,SIMPLE BURGLARY,no,3742
+hispanic,SIMPLE BURGLARY,yes,2
+black,SIMPLE BURGLARY,yes,195
+unknown,SIMPLE ROBBERY,no,37
+white,SIMPLE ROBBERY,no,49
+black,SIMPLE ROBBERY,yes,179
+black,SIMPLE ROBBERY,no,491
+hispanic,SIMPLE ROBBERY,yes,1
+hispanic,SIMPLE ROBBERY,no,4
+unknown,SIMPLE ROBBERY,yes,14
+white,SIMPLE ROBBERY,yes,12
+black,THEFT,no,10273
+asian,THEFT,no,20
+amer. ind.,THEFT,no,7
+native hawaiian or other pacific islander,THEFT,no,2
+black,THEFT,yes,244
+white,THEFT,yes,13
+hispanic,THEFT,no,136
+hispanic,THEFT,yes,4
+white,THEFT,no,1786
+unknown,THEFT,yes,61
+unknown,THEFT,no,6162
+unknown,THEFT OF A MOTOR VEHICLE,no,3576
+unknown,THEFT OF A MOTOR VEHICLE,yes,125
+black,THEFT OF A MOTOR VEHICLE,no,1060
+black,THEFT OF A MOTOR VEHICLE,yes,119
+white,THEFT OF A MOTOR VEHICLE,no,118
+white,THEFT OF A MOTOR VEHICLE,yes,5
+hispanic,THEFT OF A MOTOR VEHICLE,no,1
+native hawaiian or other pacific islander,THEFT OF A MOTOR VEHICLE,no,1
+hispanic,USE OF FIREARM IN ROBBERY,yes,2
+unknown,USE OF FIREARM IN ROBBERY,no,10
+hispanic,USE OF FIREARM IN ROBBERY,no,1
+white,USE OF FIREARM IN ROBBERY,no,9
+black,USE OF FIREARM IN ROBBERY,yes,130
+black,USE OF FIREARM IN ROBBERY,no,239
+asian,USE OF FIREARM IN ROBBERY,no,1
+unknown,USE OF FIREARM IN ROBBERY,yes,8
+white,USE OF FIREARM IN ROBBERY,yes,3
