@@ -7,7 +7,7 @@ from geopy.geocoders import GoogleV3
 
 def convert_address_to_coordinates():
     locations = pd.read_csv("data/rtcc_locations_4.csv")
-    gkey = "AIzaSyArsC8WGqTR5SAm4g1vCQyfg4XMre7kM64"
+    gkey = ""
     geolocator = GoogleV3(api_key=gkey)
 
     latitude = []
