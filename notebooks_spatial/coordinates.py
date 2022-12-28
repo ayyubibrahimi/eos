@@ -2,9 +2,40 @@ import sys
 
 sys.path.append("../")
 import pandas as pd
-from geopy.geocoders import GoogleV3, Nominatim
-from scipy import spatial
-import numpy as np
+from geopy.geocoders import GoogleV3
+
+
+def convert_address_to_coordinates():
+    locations = pd.read_csv("data/rtcc_locations_4.csv")
+    gkey = "AIzaSyArsC8WGqTR5SAm4g1vCQyfg4XMre7kM64"
+    geolocator = GoogleV3(api_key=gkey)
+
+    latitude = []
+    longitude = []
+    for row in locations["location"]:
+        address = geolocator.geocode(row)
+        lat, lon = address.latitude, address.longitude
+        latitude.append(lat)
+        longitude.append(lon)
+        coordinates = list(zip(latitude, longitude))
+        df = pd.DataFrame(coordinates)
+    return df
+
+
+def convert_coordinates_to_address():
+    cameras = pd.read_csv("new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
+    df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
+    gkey = ""
+    geolocator = GoogleV3(api_key=gkey)
+
+    df["point"] = list(zip(df["latitude"], df["longitude"]))
+
+    locations = []
+    for row in df["point"]:
+        address = geolocator.reverse(row)
+        locations.append(address)
+        df = pd.DataFrame(locations)
+    return df
 
 
 def extract_coordinates_from_calls_for_service(df):
@@ -30,40 +61,6 @@ def join_call_for_serice_and_rtcc_coordinates():
     dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
 
     df = pd.concat([dfa, dfb], axis=0)
-    return df
-
-
-def convert_coordinates_to_address():
-    cameras = pd.read_csv("new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
-    df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
-    gkey = ""
-    geolocator = GoogleV3(api_key=gkey)
-
-    df["point"] = list(zip(df["latitude"], df["longitude"]))
-
-    locations = []
-    for row in df["point"]:
-        address = geolocator.reverse(row)
-        locations.append(address)
-        df = pd.DataFrame(locations)
-    return df
-
-
-def convert_address_to_coordinates():
-    cameras = pd.read_csv("safecam.csv")
-    gkey = ""
-    # geolocator = GoogleV3(api_key=gkey)
-    geolocator = Nominatim(user_agent="my_user_agent")
-
-    latitude = []
-    longitude = []
-    for row in cameras["address"]:
-        address = geolocator.geocode(row)
-        lat, lon = address.latitude, address.longitude
-        latitude.append(lat)
-        longitude.append(lon)
-        coordinates = list(zip(latitude, longitude))
-        df = pd.DataFrame(coordinates)
     return df
 
 
