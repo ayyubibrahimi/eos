@@ -1,10 +1,11 @@
-# nopd_cameras
+# Data and analysis of surveillance cameras in New Orleans.
 
-Data and analysis of surveillance cameras in New Orleans.
 
 ## Data
-- Calls for Service (911 calls): Source data.nola.gov
 - New Orleans Cameras: Source RTCC using script below
+- Calls for Service (911 calls): Source data.nola.gov
+- Police Reports: Source data.nola.gov
+- Dataset on requests for surveillance data submitted to the Real Time Crime Center (RTCC) by the New Orleans Police Department (NOPD): Source - Data received from Public Records Requests/FOIAs submitted to NOPD. PRRs/FOIAs can be found in the `prrs` folder. 
 
 ## Downloading camera location data
 
