@@ -64,18 +64,30 @@ def distance_from_calls_to_camera():
     dfb = pd.read_csv(CAMERA_LOCATIONS_CSV)
     print("Loading camera locations...")
 
-    bt = BallTree(np.deg2rad(dfa[["latitude", "longitude"]].values), metric="haversine")
-    distances, indices = bt.query(np.deg2rad(np.c_[dfb["latitude"], dfb["longitude"]]))
+    bt_cameras = BallTree(np.deg2rad(dfa[["latitude", "longitude"]].values), metric="haversine")
+    distances_cameras, indices_cameras = bt_cameras.query(np.deg2rad(np.c_[dfb["latitude"], dfb["longitude"]]))
 
-    l = []
+    l_cameras = []
     print("Computing distances...")
-    for d in distances:
+    for d in distances_cameras:
         miles = d * 3958.8
         yards = miles * 1760
-        l.append(yards)
-        distance_df = pd.DataFrame(l, columns=["distances"])
-    avg = distance_df.distances.sum() / len(distance_df)
+        l_cameras.append(yards)
+        camera_df = pd.DataFrame(l_cameras, columns=["distances"])
+    avg_yards_cams = camera_df.distances.sum() / len(camera_df)
 
-    num_cameras = 432
-    calc = f"Average distance from a camera ({num_cameras} cameras) to a violent crime call for service is {avg} yards "
-    return calc
+    bt_calls = BallTree(np.deg2rad(dfb[["latitude", "longitude"]].values), metric="haversine")
+    distances_calls, indices_calls = bt_calls.query(np.deg2rad(np.c_[dfa["latitude"], dfa["longitude"]]))
+
+    l_calls = []
+    for d in distances_calls:
+        miles = d * 3958.8
+        yards = miles * 1760
+        l_calls.append(yards)
+        calls_df = pd.DataFrame(l_calls, columns=["distances"])
+    avg_yards_calls = calls_df.distances.sum() / len(calls_df)
+
+    num_cameras = len(dfb)
+    num_calls = len(dfa)
+    results = f"Average distance from a camera ({num_cameras} cameras) to a call for service is {avg_yards_cams} yards \nAverage distance from a call for service ({num_calls} calls) to a camera is {avg_yards_calls}"
+    return results
