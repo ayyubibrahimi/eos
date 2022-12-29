@@ -6,7 +6,7 @@ from geopy.geocoders import GoogleV3
 
 
 def convert_address_to_coordinates():
-    locations = pd.read_csv("data/rtcc_locations_4.csv")
+    locations = pd.read_csv("data/real_time_crime_center/rtcc_locations_4.csv")
     gkey = ""
     geolocator = GoogleV3(api_key=gkey)
 
@@ -23,7 +23,7 @@ def convert_address_to_coordinates():
 
 
 def convert_coordinates_to_address():
-    cameras = pd.read_csv("new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
+    cameras = pd.read_csv("calls_for_service/new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
     df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
     gkey = ""
     geolocator = GoogleV3(api_key=gkey)
@@ -54,11 +54,11 @@ def extract_coordinates_from_calls_for_service(df):
 
 
 def join_call_for_serice_and_rtcc_coordinates():
-    dfa = pd.read_csv("calls_for_service_3_21_2022.csv").pipe(
+    dfa = pd.read_csv("calls_for_service/calls_for_service_3_21_2022.csv").pipe(
         extract_coordinates_from_calls_for_service
     )
 
-    dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
+    dfb = pd.read_csv("calls_for_service/new_orleans_cameras_3_11_2022.csv")
 
     df = pd.concat([dfa, dfb], axis=0)
     return df
@@ -72,7 +72,7 @@ def read_safecam_coordinates():
 
 
 def append_safecam_and_rtcc_cameras():
-    rtcc = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
+    rtcc = pd.read_csv("calls_for_service/new_orleans_cameras_3_11_2022.csv")
     rtcc = pd.DataFrame(rtcc, columns=["latitude", "longitude"])
 
     rtcc["set"] = "rtcc"
@@ -116,13 +116,13 @@ def filter_zips_cameras(df):
 
 def concat_zips():
     dfa = (
-        pd.read_csv("calls_for_service_2022_3_21_2022.csv")
+        pd.read_csv("calls_for_service/calls_for_service_2022_3_21_2022.csv")
         .pipe(filter_zips_calls_for_service)
         .pipe(drop_rows_missing_zips)
     )
 
     dfb = (
-        pd.read_csv("camera_zips.csv")
+        pd.read_csv("calls_for_service/camera_zips.csv")
         .rename(columns={"0": "address", "cameras": "coordinates"})
         .pipe(extract_zips)
         .pipe(filter_zips_cameras)

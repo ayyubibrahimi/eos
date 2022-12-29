@@ -7,7 +7,7 @@ import numpy as np
 
 
 def distance():
-    dfa = pd.read_csv("calls_for_service_2022_9_14_2022.csv")
+    dfa = pd.read_csv("calls_for_service/calls_for_service_2022_9_14_2022.csv")
 
     # filter for violent crimes (list of all crimes below)
     dfa = dfa[
@@ -59,7 +59,7 @@ def distance():
     dfa = dfa[~((dfa.longitude == ""))]
     dfa.loc[:, "longitude"] = dfa.longitude.astype(float)
 
-    dfb = pd.read_csv("new_orleans_cameras_3_11_2022.csv")
+    dfb = pd.read_csv("calls_for_service/new_orleans_cameras_3_11_2022.csv")
 
     bt = BallTree(np.deg2rad(dfa[["latitude", "longitude"]].values), metric="haversine")
     distances, indices = bt.query(np.deg2rad(np.c_[dfb["latitude"], dfb["longitude"]]))
