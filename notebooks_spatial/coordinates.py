@@ -23,9 +23,11 @@ def convert_address_to_coordinates():
 
 
 def convert_coordinates_to_address():
-    cameras = pd.read_csv("calls_for_service/new_orleans_cameras_3_11_2022.csv").drop(columns=["set"])
-    df = pd.DataFrame(cameras, columns=["latitude", "longitude"])
-    gkey = ""
+    df = pd.read_csv("data/agency-reference-list-coordinates.csv")
+    coords = df.location.str.extract(r"(.+)\, (.+)")
+    df.loc[:, "latitude"] = coords[0]
+    df.loc[:, "longitude"] = coords[1]
+    gkey = "AIzaSyArsC8WGqTR5SAm4g1vCQyfg4XMre7kM64"
     geolocator = GoogleV3(api_key=gkey)
 
     df["point"] = list(zip(df["latitude"], df["longitude"]))
