@@ -84,6 +84,7 @@ coef_summaries <- spread_draws(model, r_charge_description[charge,b]) %>%
 # 8 STALKING                                                -4.03  -2.25 -0.898
 # 9 DOMESTIC.ABUSE.BATTERY(CHILD.ENDANGERMENT).-.SIMPLE     -3.15  -2.20 -1.45 
 #10 POSSESSION.OF.MARIJUANA.(1ST.OFFENSE)                   -2.64  -2.16 -1.73 
+
 #I can look at predicted requests for surveillance footage given a new charge that we don’t have a fit parameter for, to compare the marginal differences based on the race of the suspect:
 
 tibble(race_black = c(T, F), charge_description = "XXXX", n = 1000) %>%
